@@ -1,14 +1,12 @@
-import logo from "./logo.svg";
-import "./App.css";
-import { Button } from "semantic-ui-react";
-import Details from "./components/Details";
+import './App.css'
+import Home from './pages/Home'
 
 function App() {
   return (
-    <div className="App">
-      <Details />
+    <div className='App'>
+      <Home />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
