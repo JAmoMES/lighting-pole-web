@@ -10,14 +10,23 @@ import {
 import { useAuth } from '../contexts/AuthPorvider'
 import { getPoldDataById, updateLightStatusByAdmin } from '../services/light'
 import CardSkeleton from './CardSkeleton'
+import PoleModal from './PoleModal'
 
 const Details = ({ isOpen, onClose }) => {
   const [searchParams] = useSearchParams()
   const { user } = useAuth()
   const [loading, setLoading] = useState(false)
   const [loadingButton, setLoadingButton] = useState(false)
-
   const [poldData, setPoldData] = useState()
+  const [isOpenPole, setIsOpenPole] = useState(false)
+
+  const handleClosePole = () => {
+    setIsOpenPole(false)
+  }
+
+  const onOpenPole = () => {
+    setIsOpenPole(true)
+  }
 
   const handleToggle = () => {
     setLoadingButton(true)
@@ -49,7 +58,7 @@ const Details = ({ isOpen, onClose }) => {
   return (
     <TransitionablePortal
       open={isOpen}
-      onClose={onClose}
+      onClose={() => !isOpenPole && onClose()}
       transition={{ animation: 'fade left', duration: 500 }}
     >
       <Card
@@ -119,14 +128,36 @@ const Details = ({ isOpen, onClose }) => {
                 </span>
               </p>
               {user && (
-                <Button
-                  loading={loadingButton}
-                  style={{ width: '100%' }}
-                  secondary
-                  onClick={handleToggle}
-                >
-                  Toggle Light
-                </Button>
+                <div style={{ display: 'flex' }}>
+                  <Button
+                    loading={loadingButton}
+                    style={{ display: 'block', flexGrow: 1, marginRight: 8 }}
+                    secondary
+                    onClick={handleToggle}
+                  >
+                    Toggle Light
+                  </Button>
+                  <Button
+                    icon
+                    style={{ display: 'block' }}
+                    onClick={onOpenPole}
+                  >
+                    <Icon name='settings' />
+                  </Button>
+                  {isOpenPole && (
+                    <PoleModal
+                      isOpen={isOpenPole}
+                      handleClose={handleClosePole}
+                      defaultPole={poldData}
+                      callback={(data) => {
+                        setPoldData((poldData) => ({
+                          ...poldData,
+                          ...data,
+                        }))
+                      }}
+                    />
+                  )}
+                </div>
               )}
             </Card.Content>
           </>

@@ -29,10 +29,12 @@ const Home = () => {
     setCurrentPold(false)
   }
   useEffect(() => {
-    getAllPoldData().then(({ data }) => {
-      setPolds(data)
-      console.log(data)
-    })
+    const unSub = setInterval(() => {
+      getAllPoldData().then(({ data }) => {
+        setPolds(data)
+      })
+    }, 2000)
+    return () => clearInterval(unSub)
   }, [])
 
   return (

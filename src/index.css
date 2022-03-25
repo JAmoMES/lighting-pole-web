@@ -19,6 +19,11 @@
   z-index: 900;
 }
 
+.ui.card,
+.ui.cards > .card {
+  width: 340px;
+}
+
 img {
   object-fit: cover;
   object-position: center;
