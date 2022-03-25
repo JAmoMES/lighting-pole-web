@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthPorvider'
 import LoginModal from './LoginModal'
 
 const Navbar = () => {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
 
   const handleClose = () => {
@@ -22,23 +22,35 @@ const Navbar = () => {
         <Icon name='map outline' />
         <Header.Content>
           YellowPole
-          <Header.Subheader>check your light</Header.Subheader>
+          <Header.Subheader>Show the light for your life.</Header.Subheader>
         </Header.Content>
       </Header>
-
-      <Button
-        secondary
-        style={{ marginBottom: 10 }}
-        onClick={() => !user && onOpen}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+        }}
       >
-        {user ? (
-          `Hi! ${user.username}`
-        ) : (
-          <>
-            <Icon name='sign in' /> Admin
-          </>
+        {user && (
+          <Header as='h3' style={{ marginBottom: 5 }}>
+            Hi! "{user?.username}"
+          </Header>
         )}
-      </Button>
+        <Button
+          secondary
+          icon={!!user}
+          style={{ marginBottom: 10, marginLeft: 10 }}
+          onClick={() => (user ? logout() : onOpen())}
+        >
+          {user ? (
+            <Icon name='shutdown' />
+          ) : (
+            <>
+              <Icon name='sign in' /> Admin
+            </>
+          )}
+        </Button>
+      </div>
       <LoginModal isOpen={isOpen} handleClose={handleClose} />
     </nav>
   )

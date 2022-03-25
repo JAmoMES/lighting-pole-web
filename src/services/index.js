@@ -1,12 +1,14 @@
 import axios from 'axios'
 
+const baseUrl = process.env.REACT_APP_BASE_URL
+
 export const fetch = (
   method = 'get',
   endpoint = '/',
   body = {},
   contentType = 'application/json',
   headers = {},
-  apiUrl = 'http://lighting-hole.herokuapp.com',
+  apiUrl = baseUrl,
   options = {}
 ) => {
   const url = `${apiUrl}/${endpoint}`

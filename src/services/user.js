@@ -5,5 +5,5 @@ export function login(body) {
 }
 
 export function getUserData() {
-  return fetch('GET', `user/me}`)
+  return fetch('GET', 'users/me/')
 }

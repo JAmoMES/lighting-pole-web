@@ -1,13 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import { Dimmer, Loader } from 'semantic-ui-react'
 import { getUserData } from '../services/user'
 
 const AuthContext = createContext({})
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(undefined)
+  const [loading, setLoading] = useState(false)
 
   const setUserInfo = (data) => {
-    console.log(data)
     localStorage.setItem('token', data.accessToken)
     setUser(data.user)
   }
@@ -18,17 +19,33 @@ const AuthProvider = ({ children }) => {
   }
 
   useEffect(() => {
+    setLoading(true)
     const token = localStorage.getItem('token')
     if (token) {
       getUserData()
-        .then(({ data }) => setUserInfo(data))
-        .then(logout)
+        .then(({ data }) => {
+          setUser(data)
+        })
+        .catch(logout)
+        .finally(() => {
+          setLoading(false)
+        })
+    } else {
+      setLoading(false)
     }
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, setUserInfo, logout }}>
-      {children}
+    <AuthContext.Provider
+      value={{ user, setUserInfo, logout, loading, setLoading }}
+    >
+      {loading ? (
+        <Dimmer active>
+          <Loader />
+        </Dimmer>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   )
 }

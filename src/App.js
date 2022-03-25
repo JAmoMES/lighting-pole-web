@@ -1,23 +1,19 @@
 import './App.css'
 import Home from './pages/Home'
 import Navbar from './components/Navbar'
-import { useEffect } from 'react'
-import { getAllPoldData } from './services/light'
 import AuthProvider from './contexts/AuthPorvider'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 function App() {
-  useEffect(() => {
-    getAllPoldData().then(({ data }) => {
-      // setPoldData(data)
-      console.log(data)
-    })
-  }, [])
-
   return (
-    <AuthProvider>
-      <Navbar />
-      <Home />
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <Navbar />
+        <Routes>
+          <Route path='/' element={<Home />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   )
 }
 

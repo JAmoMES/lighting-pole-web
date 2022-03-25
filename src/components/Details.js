@@ -1,8 +1,51 @@
-import React from 'react'
-import { Card, Icon, Image, TransitionablePortal } from 'semantic-ui-react'
-import map from '../assets/images/1.png'
+import React, { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import {
+  Button,
+  Card,
+  Icon,
+  Table,
+  TransitionablePortal,
+} from 'semantic-ui-react'
+import { useAuth } from '../contexts/AuthPorvider'
+import { getPoldDataById, updateLightStatusByAdmin } from '../services/light'
+import CardSkeleton from './CardSkeleton'
 
 const Details = ({ isOpen, onClose }) => {
+  const [searchParams] = useSearchParams()
+  const { user } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const [loadingButton, setLoadingButton] = useState(false)
+
+  const [poldData, setPoldData] = useState()
+
+  const handleToggle = () => {
+    setLoadingButton(true)
+    updateLightStatusByAdmin(poldData._id)
+      .then(() => {
+        setPoldData((poldData) => ({
+          ...poldData,
+          status: !poldData.status,
+        }))
+      })
+      .finally(() => setLoadingButton(false))
+  }
+
+  useEffect(() => {
+    if (!isOpen) return
+    const poldId = searchParams.get('poldId')
+    if (poldId) {
+      setLoading(true)
+      getPoldDataById(poldId)
+        .then(({ data }) => {
+          setPoldData(data)
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
+  }, [searchParams, isOpen])
+
   return (
     <TransitionablePortal
       open={isOpen}
@@ -15,22 +58,81 @@ const Details = ({ isOpen, onClose }) => {
           position: 'fixed',
           top: '10%',
           zIndex: 1000,
+          overflow: 'hidden',
         }}
+        className='cover'
       >
-        <Image src={map} wrapped ui={false} />
-        <Card.Content>
-          <Card.Header>Daniel</Card.Header>
-          <Card.Meta>Joined in 2016</Card.Meta>
-          <Card.Description>
-            Daniel is a comedian living in Nashville.
-          </Card.Description>
-        </Card.Content>
-        <Card.Content extra>
-          <a>
-            <Icon name='user' />
-            10 Friends
-          </a>
-        </Card.Content>
+        {poldData?.name && !loading ? (
+          <>
+            <img
+              alt='1'
+              src={poldData?.image}
+              style={{
+                height: '290px',
+                width: '100%',
+                overflow: 'hidden',
+                marginBottom: -6,
+              }}
+            />
+            <Card.Content>
+              <Card.Header>{poldData?.name.toUpperCase()}</Card.Header>
+              <Card.Meta>
+                {poldData?.address ||
+                  'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut non exercitationem inventore perfer'}
+              </Card.Meta>
+            </Card.Content>
+            <Card.Content>
+              <Card.Header>PM Status</Card.Header>
+              {poldData.pm ? (
+                <Table
+                  celled
+                  fixed
+                  singleLine
+                  color='yellow'
+                  textAlign='center'
+                >
+                  <Table.Header>
+                    <Table.Row>
+                      <Table.HeaderCell>PM 1</Table.HeaderCell>
+                      <Table.HeaderCell>PM 2.5</Table.HeaderCell>
+                      <Table.HeaderCell>PM 10</Table.HeaderCell>
+                    </Table.Row>
+                  </Table.Header>
+                  <Table.Body>
+                    <Table.Row>
+                      <Table.Cell>{poldData?.pm.pm1}</Table.Cell>
+                      <Table.Cell>{poldData?.pm.pm25}</Table.Cell>
+                      <Table.Cell>{poldData?.pm.pm10}</Table.Cell>
+                    </Table.Row>
+                  </Table.Body>
+                </Table>
+              ) : (
+                <Card.Meta>No PM data</Card.Meta>
+              )}
+            </Card.Content>
+            <Card.Content extra>
+              <p>
+                <Icon name='lightbulb' color='yellow' />
+                light status:{' '}
+                <span style={{ color: 'black' }}>
+                  {poldData?.status ? 'open' : 'close'}
+                </span>
+              </p>
+              {user && (
+                <Button
+                  loading={loadingButton}
+                  style={{ width: '100%' }}
+                  secondary
+                  onClick={handleToggle}
+                >
+                  Toggle Light
+                </Button>
+              )}
+            </Card.Content>
+          </>
+        ) : (
+          <CardSkeleton />
+        )}
       </Card>
     </TransitionablePortal>
   )
