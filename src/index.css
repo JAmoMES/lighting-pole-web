@@ -1,3 +1,24 @@
+@import url('~leaflet/dist/leaflet.css');
+
+.leaflet-container {
+  width: 100%;
+  height: 100vh;
+}
+
+.navbar {
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  top: 0px;
+  width: 100%;
+  padding-top: 15px;
+  padding-bottom: 5px;
+  padding-inline: 3%;
+  backdrop-filter: blur(8px);
+  z-index: 900;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
