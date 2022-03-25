@@ -1,5 +1,5 @@
-import { fetch } from '.'
+import { fetch } from ".";
 
-export function getPmStatus(poldId) {
-  return fetch('GET', `pm/${poldId}`)
+export function getPmStatus(poleId) {
+  return fetch("GET", `pm/${poleId}`);
 }

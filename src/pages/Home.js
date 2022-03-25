@@ -1,41 +1,42 @@
-import React, { useEffect, useState } from 'react'
-import { MapContainer, Marker, TileLayer, Tooltip } from 'react-leaflet'
-import { icon } from 'leaflet'
-import Details from '../components/Details'
-import { getAllPoldData } from '../services/light'
-import { useSearchParams } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import { MapContainer, Marker, TileLayer, Tooltip } from "react-leaflet";
+import { icon } from "leaflet";
+import Details from "../components/Details";
+import { getAllPoleData } from "../services/light";
+import { useSearchParams } from "react-router-dom";
+import ChartPM from "../components/ChartPM";
 
-const position = [13.8453, 100.57]
+const position = [13.8453, 100.57];
 
 function GetIcon(_iconSize, forecast) {
   return icon({
-    iconUrl: require('../assets/images/' + forecast + '.png'),
+    iconUrl: require("../assets/images/" + forecast + ".png"),
     iconSize: [_iconSize],
-  })
+  });
 }
 
 const Home = () => {
-  const [polds, setPolds] = useState([])
-  const [, setSearchParams] = useSearchParams()
+  const [poles, setPoles] = useState([]);
+  const [, setSearchParams] = useSearchParams();
 
-  const [currentPold, setCurrentPold] = useState(false)
+  const [currentPole, setCurrentPole] = useState(false);
 
-  const handlePold = (poldId) => {
-    setSearchParams({ poldId })
-    setCurrentPold((currentPold) => !currentPold)
-  }
+  const handlePole = (poleId) => {
+    setSearchParams({ poleId });
+    setCurrentPole((currentPole) => !currentPole);
+  };
 
   const onClose = () => {
-    setCurrentPold(false)
-  }
+    setCurrentPole(false);
+  };
   useEffect(() => {
     const unSub = setInterval(() => {
-      getAllPoldData().then(({ data }) => {
-        setPolds(data)
-      })
-    }, 2000)
-    return () => clearInterval(unSub)
-  }, [])
+      getAllPoleData().then(({ data }) => {
+        setPoles(data);
+      });
+    }, 2000);
+    return () => clearInterval(unSub);
+  }, []);
 
   return (
     <>
@@ -47,26 +48,27 @@ const Home = () => {
       >
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {polds.map((pold) => (
+        {poles.map((pole) => (
           <Marker
-            key={pold._id}
-            position={[pold.lat, pold.long]}
-            icon={GetIcon(50, 'light_open')}
+            key={pole._id}
+            position={[pole.lat, pole.long]}
+            icon={GetIcon(50, "light_open")}
             eventHandlers={{
-              click: () => handlePold(pold._id),
+              click: () => handlePole(pole._id),
             }}
           >
-            <Tooltip direction='top' opacity={1}>
-              {pold.name}
+            <Tooltip direction="top" opacity={1}>
+              {pole.name}
             </Tooltip>
           </Marker>
         ))}
       </MapContainer>
-      <Details isOpen={currentPold} onClose={onClose} />
+      <ChartPM poleId={"623d7392ba85e001a01522d3"} />
+      <Details isOpen={currentPole} onClose={onClose} />
     </>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

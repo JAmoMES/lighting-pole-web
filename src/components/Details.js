@@ -8,8 +8,9 @@ import {
   TransitionablePortal,
 } from 'semantic-ui-react'
 import { useAuth } from '../contexts/AuthPorvider'
-import { getPoldDataById, updateLightStatusByAdmin } from '../services/light'
+import { getPoleDataById, updateLightStatusByAdmin } from '../services/light'
 import CardSkeleton from './CardSkeleton'
+import ChartPM from './ChartPM'
 import PoleModal from './PoleModal'
 
 const Details = ({ isOpen, onClose }) => {
@@ -17,8 +18,9 @@ const Details = ({ isOpen, onClose }) => {
   const { user } = useAuth()
   const [loading, setLoading] = useState(false)
   const [loadingButton, setLoadingButton] = useState(false)
-  const [poldData, setPoldData] = useState()
+  const [poleData, setPoleData] = useState()
   const [isOpenPole, setIsOpenPole] = useState(false)
+  const [history, setHistory] = useState(false)
 
   const handleClosePole = () => {
     setIsOpenPole(false)
@@ -30,24 +32,33 @@ const Details = ({ isOpen, onClose }) => {
 
   const handleToggle = () => {
     setLoadingButton(true)
-    updateLightStatusByAdmin(poldData._id)
+    updateLightStatusByAdmin(poleData._id)
       .then(() => {
-        setPoldData((poldData) => ({
-          ...poldData,
-          status: !poldData.status,
+        setPoleData((poleData) => ({
+          ...poleData,
+          status: !poleData.status,
         }))
       })
       .finally(() => setLoadingButton(false))
   }
 
+  const openHistory = () => {
+    setHistory(true)
+  }
+
+  const handleCloseHistory = () => {
+    console.log('mayo')
+    setHistory(false)
+  }
+
   useEffect(() => {
     if (!isOpen) return
-    const poldId = searchParams.get('poldId')
-    if (poldId) {
+    const poleId = searchParams.get('poleId')
+    if (poleId) {
       setLoading(true)
-      getPoldDataById(poldId)
+      getPoleDataById(poleId)
         .then(({ data }) => {
-          setPoldData(data)
+          setPoleData(data)
         })
         .finally(() => {
           setLoading(false)
@@ -55,10 +66,14 @@ const Details = ({ isOpen, onClose }) => {
     }
   }, [searchParams, isOpen])
 
+  useEffect(() => {
+    console.log(history)
+  })
+
   return (
     <TransitionablePortal
       open={isOpen}
-      onClose={() => !isOpenPole && onClose()}
+      onClose={() => !isOpenPole && !history && onClose()}
       transition={{ animation: 'fade left', duration: 500 }}
     >
       <Card
@@ -71,11 +86,11 @@ const Details = ({ isOpen, onClose }) => {
         }}
         className='cover'
       >
-        {poldData?.name && !loading ? (
+        {poleData?.name && !loading ? (
           <>
             <img
               alt='1'
-              src={poldData?.image}
+              src={poleData?.image}
               style={{
                 height: '290px',
                 width: '100%',
@@ -84,15 +99,28 @@ const Details = ({ isOpen, onClose }) => {
               }}
             />
             <Card.Content>
-              <Card.Header>{poldData?.name.toUpperCase()}</Card.Header>
+              <Card.Header>{poleData?.name.toUpperCase()}</Card.Header>
               <Card.Meta>
-                {poldData?.address ||
+                {poleData?.address ||
                   'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut non exercitationem inventore perfer'}
               </Card.Meta>
             </Card.Content>
             <Card.Content>
-              <Card.Header>PM Status</Card.Header>
-              {poldData.pm ? (
+              <Card.Header>
+                PM Status
+                <p
+                  onClick={openHistory}
+                  style={{
+                    fontSize: 16,
+                    color: 'gray',
+                    float: 'right',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Show History
+                </p>
+              </Card.Header>
+              {poleData.pm ? (
                 <Table
                   celled
                   fixed
@@ -109,9 +137,9 @@ const Details = ({ isOpen, onClose }) => {
                   </Table.Header>
                   <Table.Body>
                     <Table.Row>
-                      <Table.Cell>{poldData?.pm.pm1}</Table.Cell>
-                      <Table.Cell>{poldData?.pm.pm25}</Table.Cell>
-                      <Table.Cell>{poldData?.pm.pm10}</Table.Cell>
+                      <Table.Cell>{poleData?.pm.pm1}</Table.Cell>
+                      <Table.Cell>{poleData?.pm.pm25}</Table.Cell>
+                      <Table.Cell>{poleData?.pm.pm10}</Table.Cell>
                     </Table.Row>
                   </Table.Body>
                 </Table>
@@ -124,7 +152,7 @@ const Details = ({ isOpen, onClose }) => {
                 <Icon name='lightbulb' color='yellow' />
                 light status:{' '}
                 <span style={{ color: 'black' }}>
-                  {poldData?.status ? 'open' : 'close'}
+                  {poleData?.status ? 'open' : 'close'}
                 </span>
               </p>
               {user && (
@@ -148,15 +176,20 @@ const Details = ({ isOpen, onClose }) => {
                     <PoleModal
                       isOpen={isOpenPole}
                       handleClose={handleClosePole}
-                      defaultPole={poldData}
+                      defaultPole={poleData}
                       callback={(data) => {
-                        setPoldData((poldData) => ({
-                          ...poldData,
+                        setPoleData((poleData) => ({
+                          ...poleData,
                           ...data,
                         }))
                       }}
                     />
                   )}
+                  <ChartPM
+                    poleId={poleData._id}
+                    isOpen={history}
+                    handleClose={handleCloseHistory}
+                  />
                 </div>
               )}
             </Card.Content>
