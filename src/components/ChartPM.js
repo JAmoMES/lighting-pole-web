@@ -13,9 +13,7 @@ import { Modal, TransitionablePortal } from 'semantic-ui-react'
 import { getPmStatus } from '../services/pm'
 
 function timeToDate(timestamp) {
-  console.log(timestamp)
   const d = new Date(timestamp * 1000)
-  console.log(d)
   return (
     d.getDate() +
     '-' +
@@ -42,10 +40,8 @@ const ChartPM = ({ poleId, isOpen, handleClose }) => {
   useEffect(() => {
     getPmStatus(poleId).then(({ data }) => {
       setPmValue(mapDateTime(data))
-      console.log(data)
     })
-    console.log(handleClose)
-  }, [])
+  }, [poleId])
 
   return (
     <TransitionablePortal

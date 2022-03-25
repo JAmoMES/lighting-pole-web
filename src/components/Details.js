@@ -108,17 +108,19 @@ const Details = ({ isOpen, onClose }) => {
             <Card.Content>
               <Card.Header>
                 PM Status
-                <p
-                  onClick={openHistory}
-                  style={{
-                    fontSize: 16,
-                    color: 'gray',
-                    float: 'right',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Show History
-                </p>
+                {poleData.pm && (
+                  <p
+                    onClick={openHistory}
+                    style={{
+                      fontSize: 14,
+                      color: 'gray',
+                      float: 'right',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    show history
+                  </p>
+                )}
               </Card.Header>
               {poleData.pm ? (
                 <Table
@@ -185,13 +187,13 @@ const Details = ({ isOpen, onClose }) => {
                       }}
                     />
                   )}
-                  <ChartPM
-                    poleId={poleData._id}
-                    isOpen={history}
-                    handleClose={handleCloseHistory}
-                  />
                 </div>
               )}
+              <ChartPM
+                poleId={poleData._id}
+                isOpen={history}
+                handleClose={handleCloseHistory}
+              />
             </Card.Content>
           </>
         ) : (
