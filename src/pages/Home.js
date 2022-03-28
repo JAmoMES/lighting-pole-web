@@ -5,6 +5,7 @@ import Details from '../components/Details'
 import { getAllPoleData } from '../services/light'
 import { useSearchParams } from 'react-router-dom'
 import ChartPM from '../components/ChartPM'
+import { useAuth } from '../contexts/AuthPorvider'
 
 const position = [13.8453, 100.57]
 
@@ -16,6 +17,7 @@ function GetIcon(_iconSize, forecast) {
 }
 
 const Home = () => {
+  const { setLoading } = useAuth()
   const [poles, setPoles] = useState([])
   const [, setSearchParams] = useSearchParams()
 
@@ -29,14 +31,17 @@ const Home = () => {
   const onClose = () => {
     setCurrentPole(false)
   }
+
   useEffect(() => {
+    setLoading(true)
     const unSub = setInterval(() => {
       getAllPoleData().then(({ data }) => {
         setPoles(data)
+        setLoading(false)
       })
     }, 2000)
     return () => clearInterval(unSub)
-  }, [])
+  }, [setLoading])
 
   return (
     <>
