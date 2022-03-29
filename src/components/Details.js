@@ -8,7 +8,7 @@ import {
   TransitionablePortal,
 } from 'semantic-ui-react'
 import { useAuth } from '../contexts/AuthPorvider'
-import { getPoleDataById, updateLightStatusByAdmin } from '../services/light'
+import { getPoleDataById } from '../services/light'
 import CardSkeleton from './CardSkeleton'
 import ChartPM from './ChartPM'
 import PoleModal from './PoleModal'
@@ -17,7 +17,7 @@ const Details = ({ isOpen, onClose }) => {
   const [searchParams] = useSearchParams()
   const { user } = useAuth()
   const [loading, setLoading] = useState(false)
-  const [loadingButton, setLoadingButton] = useState(false)
+  // const [loadingButton, setLoadingButton] = useState(false)
   const [poleData, setPoleData] = useState()
   const [isOpenPole, setIsOpenPole] = useState(false)
   const [history, setHistory] = useState(false)
@@ -30,17 +30,17 @@ const Details = ({ isOpen, onClose }) => {
     setIsOpenPole(true)
   }
 
-  const handleToggle = () => {
-    setLoadingButton(true)
-    updateLightStatusByAdmin(poleData._id)
-      .then(() => {
-        setPoleData((poleData) => ({
-          ...poleData,
-          status: !poleData.status,
-        }))
-      })
-      .finally(() => setLoadingButton(false))
-  }
+  // const handleToggle = () => {
+  //   setLoadingButton(true)
+  //   updateLightStatusByAdmin(poleData._id)
+  //     .then(() => {
+  //       setPoleData((poleData) => ({
+  //         ...poleData,
+  //         status: !poleData.status,
+  //       }))
+  //     })
+  //     .finally(() => setLoadingButton(false))
+  // }
 
   const openHistory = () => {
     setHistory(true)
@@ -130,18 +130,10 @@ const Details = ({ isOpen, onClose }) => {
                   color='yellow'
                   textAlign='center'
                 >
-                  <Table.Header>
-                    <Table.Row>
-                      <Table.HeaderCell>PM 1</Table.HeaderCell>
-                      <Table.HeaderCell>PM 2.5</Table.HeaderCell>
-                      <Table.HeaderCell>PM 10</Table.HeaderCell>
-                    </Table.Row>
-                  </Table.Header>
                   <Table.Body>
                     <Table.Row>
-                      <Table.Cell>{poleData?.pm.pm1}</Table.Cell>
+                      <Table.HeaderCell>PM 2.5</Table.HeaderCell>
                       <Table.Cell>{poleData?.pm.pm25}</Table.Cell>
-                      <Table.Cell>{poleData?.pm.pm10}</Table.Cell>
                     </Table.Row>
                   </Table.Body>
                 </Table>
@@ -158,18 +150,19 @@ const Details = ({ isOpen, onClose }) => {
                 </span>
               </p>
               {user && (
-                <div style={{ display: 'flex' }}>
-                  <Button
-                    loading={loadingButton}
-                    style={{ display: 'block', flexGrow: 1, marginRight: 8 }}
-                    secondary
-                    onClick={handleToggle}
-                  >
-                    Toggle Light
-                  </Button>
+                // <div style={{ display: 'flex' }}>
+                //   <Button
+                //     loading={loadingButton}
+                //     style={{ display: 'block', flexGrow: 1, marginRight: 8 }}
+                //     secondary
+                //     onClick={handleToggle}
+                //   >
+                //     Toggle Light
+                //   </Button>
+                <>
                   <Button
                     icon
-                    style={{ display: 'block' }}
+                    style={{ right: '4%', position: 'fixed', top: '14%' }}
                     onClick={onOpenPole}
                   >
                     <Icon name='settings' />
@@ -187,7 +180,8 @@ const Details = ({ isOpen, onClose }) => {
                       }}
                     />
                   )}
-                </div>
+                  {/* </div> */}
+                </>
               )}
               <ChartPM
                 poleId={poleData._id}

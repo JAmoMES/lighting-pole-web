@@ -72,9 +72,7 @@ const ChartPM = ({ poleId, isOpen, handleClose }) => {
                 <YAxis />
                 <Tooltip wrapperStyle={{ zIndex: 1000 }} active={true} />
                 <Legend verticalAlign='top' height={36} />
-                <Line type='monotone' dataKey='pm1' stroke='#8884d8' />
                 <Line type='monotone' dataKey='pm25' stroke='#82ca9d' />
-                <Line type='monotone' dataKey='pm10' stroke='#82cadd' />
               </LineChart>
             </ResponsiveContainer>
           )}
