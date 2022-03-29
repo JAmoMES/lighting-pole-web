@@ -39,7 +39,7 @@ const Home = () => {
         setPoles(data)
         setLoading(false)
       })
-    }, 2000)
+    }, 1000)
     return () => clearInterval(unSub)
   }, [setLoading])
 
